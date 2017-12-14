@@ -46,6 +46,9 @@
         device.open({ stopBits: 0, bitRate: 115200, ctsFlowControl: 0 });
         device.set_receive_handler(function(data) {
             console.log('Received: ' + data.byteLength);
+            // Seems to be a valid PicoBoard.
+            clearTimeout(watchdog);
+            watchdog = null;
         });
 
         // Tell the board to send a input data every 50ms
@@ -95,5 +98,5 @@
         },
         url: 'https://www.seeedstudio.com/'
     };
-    ScratchExtensions.register('Grove Zero', descriptor, ext, {type: 'serial'});
+    ScratchExtensions.register('GroveZero', descriptor, ext, {type: 'serial'});
 })({});
