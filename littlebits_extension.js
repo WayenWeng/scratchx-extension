@@ -11,7 +11,7 @@
   var device = null;
   var poller = null;
   var rawData = null;
- 
+
   /* TEMPORARY WORKAROUND
      this is needed since the _deviceRemoved method
      is not called when serial devices are unplugged*/
@@ -57,13 +57,14 @@
     if (inputVals[pin] > 0) return true;
     return false;
   };
-  
+
   ext.analogWrite = function(pin, val) {
     var output = new Uint8Array(3);
     output[0] = 2;
     output[1] = outputPins[pin];
     output[2] = val;
     device.send(output.buffer);
+    console.log("analogWrite");
   };
 
   ext.digitalWrite = function(pin, val) {
@@ -75,6 +76,7 @@
     else
       output[2] = 0;
     device.send(output.buffer);
+    console.log("digitalWrite");
   };
 
   ext.whenAnalogRead = function(pin, op, val) {
@@ -99,7 +101,7 @@
     var output = (((bMax - bMin) * (val - aMin)) / (aMax - aMin)) + bMin;
     return Math.round(output);
   };
- 
+
   ext._getStatus = function() {
     if (!connected)
       return { status:1, msg:'Disconnected' };
@@ -116,14 +118,14 @@
     sendAttempts = 0;
     connected = true;
     if (device) return;
-    
+
     device = dev;
     device.open({ stopBits: 0, bitRate: 38400, ctsFlowControl: 0 });
     device.set_receive_handler(function(data) {
       sendAttempts = 0;
       var inputData = new Uint8Array(data);
       processInput(inputData);
-    }); 
+    });
 
     poller = setInterval(function() {
 
@@ -138,8 +140,8 @@
         clearInterval(poller);
         return;
       }
-      
-      device.send(pingCmd.buffer); 
+
+      device.send(pingCmd.buffer);
       console.log("send pingcmd");
       sendAttempts++;
 
@@ -173,7 +175,7 @@
       inAPins: ['a0', 'a1'],
       dOutp: ['on', 'off'],
       ops: ['>', '=', '<']
-    },  
+    },
     url: 'http://khanning.github.io/scratch-littlebits-extension'
   };
 
