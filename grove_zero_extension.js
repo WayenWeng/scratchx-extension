@@ -1,28 +1,11 @@
 (function(ext) {
   
-  var connected = false;
-  var device = null;
-  var poller = null;
-  var rawData = null;
-  
-  var BTN_UP = 0,
-    BTN_DOWN = 1,
-    BTN_HELD = 2;
-  var buttonState = {A: 0, B: 0};
- 
-  /* TEMPORARY WORKAROUND
-     this is needed since the _deviceRemoved method
-     is not called when serial devices are unplugged*/
-  var sendAttempts = 0;
-
   var pingCmd = new Uint8Array(1);
-  pingCmd[0] = 0x54;
-
-  ext.whenButtonPressed = function(btn) {
-    if (btn === 'any')
-      return buttonState['A'] == BTN_DOWN | buttonState['B'] == BTN_DOWN;
-    return buttonState[btn] == BTN_DOWN;
-  };
+  pingCmd[0] = 1;
+  
+  ext.whenButtonPressed = function() {
+      return false
+  }
   
   ext._getStatus = function() {
     if (!connected)
@@ -32,49 +15,60 @@
   };
 
   ext._deviceRemoved = function(dev) {
+    console.log('Device removed');
     // Not currently implemented with serial devices
   };
 
-  var poller = null;
+  var potentialDevices = [];
   ext._deviceConnected = function(dev) {
-    sendAttempts = 0;
-    connected = true;
-    if (device) return;
-    
-    device = dev;
-    device.open({ stopBits: 0, bitRate: 38400, ctsFlowControl: 0 });
-    device.set_receive_handler(function(data) {
-      sendAttempts = 0;
-      console.log('Received: ' + data.byteLength);
-    }); 
-
-    poller = setInterval(function() {
-
-      /* TEMPORARY WORKAROUND
-         Since _deviceRemoved is not
-         called while using serial devices */
-      if (sendAttempts >= 10) {
-        connected = false;
-        device.close();
-        device = null;
-        rawData = null;
-        clearInterval(poller);
-        return;
-      }
-      
-      device.send(pingCmd.buffer); 
-      console.log("send pingcmd");
-      sendAttempts++;
-
-    }, 50);
-
+    potentialDevices.push(dev);
+    if (!device)
+      tryNextDevice();
   };
 
+  var poller = null;
+  var watchdog = null;
+  function tryNextDevice() {
+    device = potentialDevices.shift();
+    if (!device) return;
+
+    device.open({ stopBits: 0, bitRate: 57600, ctsFlowControl: 0 });
+    console.log('Attempting connection with ' + device.id);
+    device.set_receive_handler(function(data) {
+      var inputData = new Uint8Array(data);
+      console.log('Input data:' + inputData);
+    });
+
+    poller = setInterval(function() {
+      device.send(pingCmd.buffer); 
+    }, 1000);
+
+    watchdog = setTimeout(function() {
+      clearInterval(poller);
+      poller = null;
+      device.set_receive_handler(null);
+      device.close();
+      device = null;
+      tryNextDevice();
+    }, 5000);
+  }
+
   ext._shutdown = function() {
+    // TODO: Bring all pins down
     if (device) device.close();
     if (poller) clearInterval(poller);
     device = null;
   };
+
+  // Check for GET param 'lang'
+  var paramString = window.location.search.replace(/^\?|\/$/g, '');
+  var vars = paramString.split("&");
+  var lang = 'en';
+  for (var i=0; i<vars.length; i++) {
+    var pair = vars[i].split('=');
+    if (pair.length > 1 && pair[0]=='lang')
+      lang = pair[1];
+  }
 
   var descriptor = {
     blocks: [
@@ -86,6 +80,6 @@
         url: 'https://www.seeedstudio.com/'
   };
 
-  ScratchExtensions.register('littleBits', descriptor, ext, {type:'serial'});
+  ScratchExtensions.register('GroveZero', descriptor, ext, {type:'serial'});
 
 })({});
