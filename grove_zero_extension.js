@@ -56,6 +56,7 @@
         pingCmd[0] = 0x54;
         
         poller = setInterval(function() {
+            console.log('send ping cmd');
             device.send(pingCmd.buffer);
         }, 50);
         
