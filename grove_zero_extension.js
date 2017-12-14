@@ -79,7 +79,7 @@
         device = potentialDevices.shift();
         if (!device) return;
 
-        device.open({ stopBits: 0, bitRate: 38400, ctsFlowControl: 1, dataBits: 8, parityBit: 0});
+        device.open({ stopBits: 0, bitRate: 38400, ctsFlowControl: 0, dataBits: 8, parityBit: 0});
         console.log('Attempting connection with ' + device.id);
         
         device.set_receive_handler(function(data) {
