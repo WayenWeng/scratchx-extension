@@ -43,7 +43,7 @@
         device = potentialDevices.shift();
         if (!device) return;
 
-        device.open({ stopBits: 0, bitRate: 115200, ctsFlowControl: 0 });
+        device.open({ stopBits: 0, bitRate: 38400, ctsFlowControl: 0 });
         device.set_receive_handler(function(data) {
             console.log('Received: ' + data.byteLength);
             // Seems to be a valid PicoBoard.
