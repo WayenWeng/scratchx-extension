@@ -41,24 +41,19 @@
     var inputArray = [];
     function processData() {
         var bytes = new Uint8Array(rawData);
-        
-        inputArray[3] = 0;
 
+        inputArray[3] = 0;
+        for(var i = 0; i < 4; i ++) {
+            inputArray[i] = bytes[i];
+        }
+            
         if (watchdog && (inputArray[3] == 0x54)) {
             // Seems to be a valid board.
             clearTimeout(watchdog);
             watchdog = null;
         }
 
-        console.log(bytes);
         rawData = null;
-    }
-
-    function appendBuffer(buffer1, buffer2) {
-        var tmp = new Uint8Array(buffer1.byteLength + buffer2.byteLength);
-        tmp.set(new Uint8Array(buffer1), 0);
-        tmp.set(new Uint8Array(buffer2), buffer1.byteLength);
-        return tmp.buffer;
     }
 
     // Extension API interactions
@@ -74,41 +69,36 @@
     var poller = null;
     var watchdog = null;
     function tryNextDevice() {
-        // If potentialDevices is empty, device will be undefined.
-        // That will get us back here next time a device is connected.
         device = potentialDevices.shift();
         if (!device) return;
 
-        device.open({ bitRate: 38400, dataBits: 8, stopBits: 0, ctsFlowControl: 0, parityBit: 0 });
-        console.log('Attempting connection with ' + device.id);
-        
-        device.set_receive_handler(function(data) {
-            console.log('Received: ' + data.byteLength);
-            if(!rawData || rawData.byteLength == 4) rawData = new Uint8Array(data);
-            else rawData = appendBuffer(rawData, data);
+        device.open({stopBits: 0, bitRate: 57600, ctsFlowControl: 0}, function() {
+            console.log('Attempting connection with ' + device.id);
+            device.set_receive_handler(function(data) {
+                console.log('Received: ' + data.byteLength);
 
-            if(rawData.byteLength >= 4) {
-                console.log(rawData);
-                processData();
-            }
+                if(!rawData || rawData.byteLength >= 4) {
+                    rawData = new Uint8Array(data);
+                    console.log('rawData: ' + rawData);
+                    processData();
+                }
+            });
         });
 
-        // Tell the PicoBoard to send a input data every 50ms
         var pingCmd = new Uint8Array(1);
         pingCmd[0] = 0x01;
         poller = setInterval(function() {
             device.send(pingCmd.buffer);
         }, 1000);
+        
         watchdog = setTimeout(function() {
-            // This device didn't get good data in time, so give up on it. Clean up and then move on.
-            // If we get good data then we'll terminate this watchdog.
             clearInterval(poller);
             poller = null;
             device.set_receive_handler(null);
             device.close();
             device = null;
             tryNextDevice();
-        }, 250);
+        }, 5000);
     };
 
     ext._deviceRemoved = function(dev) {
