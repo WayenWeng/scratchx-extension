@@ -138,7 +138,7 @@
   function processInput(inputData) {
     console.log(inputData);
     lastReadTime = Date.now();
-    console.log(lastReadTime);
+    console.log('last read time: ' + lastReadTime);
     for (var i=0; i<inputData.length; i++) {
       if (parsingCmd) {
         storedInputData[bytesRead++] = inputData[i];
