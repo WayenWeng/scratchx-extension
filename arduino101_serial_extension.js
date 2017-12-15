@@ -87,6 +87,7 @@
 
   function digitalWrite(pin, val) {
     if (DIGITAL_PINS.indexOf(parseInt(pin)) === -1) return;
+    console.log('pin: ' + pin + 'val: ' + val);
     device.send(new Uint8Array([CMD_DIGITAL_WRITE, pin, val]).buffer);
   }
 
