@@ -84,21 +84,21 @@
     function processCommand() {
         switch (command) {
             case CMD_PING:
-                if (storedInputData[0] === CMD_PING_CONFIRM) {
+                if (storedInputData[1] === CMD_PING_CONFIRM) {
                     connected = true;
                     clearTimeout(watchdog);
                     watchdog = null;
-                    // clearInterval(poller);
-                    // poller = setInterval(function() {
-                        // if (Date.now() - lastReadTime > 5000) {
-                            // connected = false;
-                            // device.set_receive_handler(null);
-                            // device.close();
-                            // device = null;
-                            // clearInterval(poller);
-                            // poller = null;
-                        // }
-                    // }, 2000);
+                    clearInterval(poller);
+                    poller = setInterval(function() {
+                        if (Date.now() - lastReadTime > 5000) {
+                            connected = false;
+                            device.set_receive_handler(null);
+                            device.close();
+                            device = null;
+                            clearInterval(poller);
+                            poller = null;
+                        }
+                    }, 2000);
                 }
             break;
             
