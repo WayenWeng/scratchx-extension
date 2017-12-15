@@ -88,17 +88,17 @@
                     connected = true;
                     clearTimeout(watchdog);
                     watchdog = null;
-                    clearInterval(poller);
-                    poller = setInterval(function() {
-                        if (Date.now() - lastReadTime > 5000) {
-                            connected = false;
-                            device.set_receive_handler(null);
-                            device.close();
-                            device = null;
-                            clearInterval(poller);
-                            poller = null;
-                        }
-                    }, 2000);
+                    // clearInterval(poller);
+                    // poller = setInterval(function() {
+                        // if (Date.now() - lastReadTime > 5000) {
+                            // connected = false;
+                            // device.set_receive_handler(null);
+                            // device.close();
+                            // device = null;
+                            // clearInterval(poller);
+                            // poller = null;
+                        // }
+                    // }, 2000);
                 }
             break;
             
