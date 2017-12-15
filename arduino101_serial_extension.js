@@ -87,7 +87,7 @@
 
   function digitalWrite(pin, val) {
     if (DIGITAL_PINS.indexOf(parseInt(pin)) === -1) return;
-    console.log('pin: ' + pin + 'val: ' + val);
+    console.log('pin: ' + pin + ', val: ' + val);
     device.send(new Uint8Array([CMD_DIGITAL_WRITE, pin, val]).buffer);
   }
 
@@ -138,6 +138,7 @@
   function processInput(inputData) {
     console.log(inputData);
     lastReadTime = Date.now();
+    console.log(lastReadTime);
     for (var i=0; i<inputData.length; i++) {
       if (parsingCmd) {
         storedInputData[bytesRead++] = inputData[i];
