@@ -89,7 +89,7 @@
         pingCmd[0] = 0x01;
         poller = setInterval(function() {
             device.send(pingCmd.buffer);
-        }, 50);
+        }, 25);
         
         watchdog = setTimeout(function() {
             clearInterval(poller);
