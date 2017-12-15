@@ -117,6 +117,7 @@
 
     poller = setInterval(function() {
       pingDevice();
+      console.log('ping device');
     }, 1000);
 
     watchdog = setTimeout(function() {
@@ -134,6 +135,7 @@
   }
 
   function processInput(inputData) {
+    console.log(inputData);
     lastReadTime = Date.now();
     for (var i=0; i<inputData.length; i++) {
       if (parsingCmd) {
