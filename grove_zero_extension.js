@@ -54,6 +54,7 @@
     function processInput(inputData) {
         console.log(inputData);
         lastReadTime = Date.now();
+        console.log('last read time: ' + lastReadTime);
         for (var i = 0; i < inputData.length; i ++) {
             if (parsingCmd) {
                 storedInputData[bytesRead ++] = inputData[i];
@@ -73,7 +74,7 @@
                     case CMD_BUTTON_READ:
                         parsingCmd = true;
                         command = inputData[i];
-                        waitForData = 2;
+                        waitForData = 1;
                         bytesRead = 0;
                     break;
                 }
@@ -84,7 +85,7 @@
     function processCommand() {
         switch (command) {
             case CMD_PING:
-                if (storedInputData[1] === CMD_PING_CONFIRM) {
+                if (storedInputData[0] === CMD_PING_CONFIRM) {
                     connected = true;
                     clearTimeout(watchdog);
                     watchdog = null;
