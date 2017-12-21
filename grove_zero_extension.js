@@ -110,11 +110,11 @@
 
     ext.whenButtonPressed = function(btn) {
         if(btn == 'A') {
-            if((buttonData >= 1) && (buttonData <= 3)) return true;
+            if((buttonData >= 1) && (buttonData <= 3)) {console.log("A pressed"); return true;}
             else return false;
         }
         else if(btn == 'B') {
-            if((buttonData >= 4) && (buttonData <= 6)) return true;
+            if((buttonData >= 4) && (buttonData <= 6)) {console.log("B pressed"); return true;}
             else return false;
         }
         else return false;
