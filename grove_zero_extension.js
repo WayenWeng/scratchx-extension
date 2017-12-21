@@ -13,7 +13,7 @@
     var parsingCmd = false;
     var bytesRead = 0;
     var waitForData = 0;
-    var storedInputData = new Uint8Array(128);
+    var storedInputData = new Uint8Array(4096);
     
     var CMD_PING = 0x70,
         CMD_PING_CONFIRM = 0x71,
@@ -98,7 +98,7 @@
                             clearInterval(poller);
                             poller = null;
                         }
-                    }, 100);
+                    }, 2000);
                 }
             break;
             
