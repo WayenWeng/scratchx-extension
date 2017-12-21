@@ -91,6 +91,7 @@
                     watchdog = null;
                     clearInterval(poller);
                     poller = setInterval(function() {
+                        console.log('process command poller');
                         if (Date.now() - lastReadTime > 5000) {
                             connected = false;
                             device.set_receive_handler(null);
