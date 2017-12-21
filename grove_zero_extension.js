@@ -54,7 +54,6 @@
     function processInput(inputData) {
         console.log(inputData);
         lastReadTime = Date.now();
-        console.log('last read time: ' + lastReadTime);
         for (var i = 0; i < inputData.length; i ++) {
             if (parsingCmd) {
                 storedInputData[bytesRead ++] = inputData[i];
@@ -66,14 +65,12 @@
             else {
                 switch (inputData[i]) {
                     case CMD_PING:
-                        console.log('process input ping');
                         parsingCmd = true;
                         command = inputData[i];
                         waitForData = 2;
                         bytesRead = 0;
                     break;
                     case CMD_BUTTON_READ:
-                        console.log('process input command button read');
                         parsingCmd = true;
                         command = inputData[i];
                         waitForData = 2;
@@ -87,29 +84,26 @@
     function processCommand() {
         switch (command) {
             case CMD_PING:
-                console.log('process command ping');
                 if (storedInputData[0] === CMD_PING_CONFIRM) {
                     connected = true;
                     clearTimeout(watchdog);
                     watchdog = null;
                     clearInterval(poller);
-                    // poller = setInterval(function() {
-                        // console.log('process command poller');
-                        // if (Date.now() - lastReadTime > 5000) {
-                            // connected = false;
-                            // device.set_receive_handler(null);
-                            // device.close();
-                            // device = null;
-                            // clearInterval(poller);
-                            // poller = null;
-                        // }
-                    // }, 2000);
+                    poller = setInterval(function() {
+                        if (Date.now() - lastReadTime > 5000) {
+                            connected = false;
+                            device.set_receive_handler(null);
+                            device.close();
+                            device = null;
+                            clearInterval(poller);
+                            poller = null;
+                        }
+                    }, 2000);
                 }
             break;
             
             case CMD_BUTTON_READ:
                 buttonData = storedInputData[0];
-                console.log('button A data ' + buttonData); 
             break;
         }
     }
