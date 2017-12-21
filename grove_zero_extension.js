@@ -85,7 +85,7 @@
     function processCommand() {
         switch (command) {
             case CMD_PING:
-                if (storedInputData[1] === CMD_PING_CONFIRM) {
+                if (storedInputData[0] === CMD_PING_CONFIRM) {
                     connected = true;
                     clearTimeout(watchdog);
                     watchdog = null;
@@ -105,7 +105,7 @@
             break;
             
             case CMD_BUTTON_READ:
-                buttonData = storedInputData[1];
+                buttonData = storedInputData[0];
             break;
         }
     }
