@@ -74,7 +74,7 @@
                     case CMD_BUTTON_READ:
                         parsingCmd = true;
                         command = inputData[i];
-                        waitForData = 1;
+                        waitForData = 2;
                         bytesRead = 0;
                     break;
                 }
