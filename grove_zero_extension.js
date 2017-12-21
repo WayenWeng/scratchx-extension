@@ -13,7 +13,7 @@
     var parsingCmd = false;
     var bytesRead = 0;
     var waitForData = 0;
-    var storedInputData = new Uint8Array(64);
+    var storedInputData = new Uint8Array(128);
     
     var CMD_PING = 0x70,
         CMD_PING_CONFIRM = 0x71,
@@ -29,7 +29,7 @@
         device = potentialDevices.shift();
         if (!device) return;
 
-        device.open({stopBits: 0, bitRate: 57600, ctsFlowControl: 0}, function() {
+        device.open({stopBits: 0, bitRate: 115200, ctsFlowControl: 0}, function() {
             console.log('Connection with ' + device.id);
             device.set_receive_handler(function(data) {
                 processInput(new Uint8Array(data));
@@ -109,15 +109,18 @@
     }
 
     ext.whenButtonPressed = function(btn) {
-        console.log('whenButtonPressed');
         if(btn == 'A') {
-            console.log('A ...');
-            if((buttonData >= 1) && (buttonData <= 3)) {buttonData = 0; console.log('A pressed'); return true;}
+            if((buttonData >= 1) && (buttonData <= 3)) {
+                buttonData = 0; 
+                return true;
+            }
             else return false;
         }
         else if(btn == 'B') {
-            console.log('B ...');
-            if((buttonData >= 4) && (buttonData <= 6)) {buttonData = 0; console.log('B pressed'); return true;}
+            if((buttonData >= 4) && (buttonData <= 6)) {
+                buttonData = 0; 
+                return true;
+            }
             else return false;
         }
         else return false;
