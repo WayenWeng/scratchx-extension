@@ -103,8 +103,7 @@
             break;
             
             case CMD_BUTTON_READ:
-                buttonData = storedInputData[0];
-                console.log('buttonData: ' + buttonData);
+                if(storedInputData[0] != 0)buttonData = storedInputData[0];
             break;
         }
     }
@@ -113,12 +112,12 @@
         console.log('whenButtonPressed');
         if(btn == 'A') {
             console.log('A ...');
-            if((buttonData >= 1) && (buttonData <= 3)) {console.log('A pressed'); return true;}
+            if((buttonData >= 1) && (buttonData <= 3)) {buttonData = 0; console.log('A pressed'); return true;}
             else return false;
         }
         else if(btn == 'B') {
             console.log('B ...');
-            if((buttonData >= 4) && (buttonData <= 6)) {console.log('B pressed'); return true;}
+            if((buttonData >= 4) && (buttonData <= 6)) {buttonData = 0; console.log('B pressed'); return true;}
             else return false;
         }
         else return false;
