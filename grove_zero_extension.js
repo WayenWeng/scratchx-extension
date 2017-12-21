@@ -66,12 +66,14 @@
             else {
                 switch (inputData[i]) {
                     case CMD_PING:
+                        console.log('process input ping');
                         parsingCmd = true;
                         command = inputData[i];
                         waitForData = 2;
                         bytesRead = 0;
                     break;
                     case CMD_BUTTON_READ:
+                        console.log('process input command button read');
                         parsingCmd = true;
                         command = inputData[i];
                         waitForData = 2;
@@ -85,6 +87,7 @@
     function processCommand() {
         switch (command) {
             case CMD_PING:
+                console.log('process command ping');
                 if (storedInputData[0] === CMD_PING_CONFIRM) {
                     connected = true;
                     clearTimeout(watchdog);
@@ -105,12 +108,14 @@
             break;
             
             case CMD_BUTTON_READ:
+                console.log('process command button read');
                 buttonData = storedInputData[0];
             break;
         }
     }
 
     ext.whenButtonPressed = function(btn) {
+        console.log('button data ' + buttonData);
         if(btn == 'A') {
             if((buttonData >= 1) && (buttonData <= 3) ) return true;
             else return false;
