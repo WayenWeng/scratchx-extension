@@ -98,7 +98,7 @@
                             clearInterval(poller);
                             poller = null;
                         }
-                    }, 2000);
+                    }, 100);
                 }
             break;
             
